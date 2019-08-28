@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 后端处理图片压缩及上传 -->
+    <!-- <p>上传文件</p>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <h2>单文件上传</h2>
+        <input type="file" name="pic"/>
+        <input type="submit" value="提交">
+    </form> -->
+
+    <input type="file" name="pic" id="file" />
+    <script>
+        const oFile = document.getElementById('file');
+        const reader = new FileReader();
+        const img = new Image();
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        oFile.onchange = function(e) {
+            // console.log(e);
+            let file = event.target.files[0];
+            console.log(file);
+            if (file.type.indexOf("image") == 0){
+                reader.readAsDataURL(file);
+            } else {
+                console.log('这不是一张图片');
+            }
+           
+        }
+
+        // 已经读取到内存中了
+        reader.onload = function(e) {
+            // canves -> Image
+            // console.log(e.target.result)
+            // 异步的加载
+            img.src = e.target.result;
+
+        }
+
+        img.onload = function() {
+            // canvas 去压缩
+            let originWidth = this.width;
+            let originHeight = this.height;
+            const maxWidth = 400, maxHight = 400;
+
+            let targetWidth = originWidth, targetHeight = originHeight;
+
+            if (originWidth > maxWidth || originHeight > maxHight) {
+                if ( originWidth / originHeight > maxWidth / maxHight) {
+                    targetWidth = maxWidth;
+                    targetHeight = Math.round(maxHight * (originHeight / originWidth));
+                } else {
+                    targetHeight = maxHight;
+                    targetWidth = Math.round(maxWidth * (originWidth / originHeight));
+                }
+            }
+
+
+
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            context.drawImage(this, 0, 0, targetWidth, targetHeight);
+            document.body.append(canvas);
+
+        }
+    </script>
+</body>
+</html>
